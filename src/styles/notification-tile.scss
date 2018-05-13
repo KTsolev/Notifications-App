@@ -6,7 +6,7 @@
   flex:1;
   padding:10px;
   margin: 5px 0;
-  min-width: 350px;
+  width:80%;
   height: 70px;
   border-radius: 10px;
   box-shadow: 2px rgba($color-black, 0.7);
@@ -85,7 +85,7 @@
       color: $color-bordo;
     }
   }
-  
+
   &__text {
     color: rgba($color-black, 0.7);
   }

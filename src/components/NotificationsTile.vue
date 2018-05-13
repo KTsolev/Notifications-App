@@ -1,7 +1,5 @@
 <template>
-  <div v-if="changeNotification">
-    <changeNotification />
-  </div>
+  <changeNotification v-if="updateNotification" v-bind:notification="notification" />
   <div v-else v-bind:class="[toExpand
   ? 'notification-tile notification-tile--expanded'
     : 'notification-tile']" v-on:click="expand">
@@ -26,7 +24,7 @@
         <span v-if="notification.expires">{{ notification.expires }}</span>
       </div>
       <div class="notification-tile__action-area">
-        <span class="notification-tile__button notification-tile__button--update">Update</span>
+        <span class="notification-tile__button notification-tile__button--update" v-on:click="toToggleUpdate">Update</span>
         <span class="notification-tile__button notification-tile__button--delete">Delete</span>
       </div>
     </div>
@@ -53,7 +51,7 @@
         return {
           ticks:0,
           toExpand: false,
-          changeNotification: true
+          updateNotification: false
         }
     },
 
@@ -76,7 +74,6 @@
          }
 
          if ( expiresAfter === this.notification.expires ) {
-           console.log('event fired ', this.ticks)
            return eventBus.$emit('itemExpired', this.notification);
          }
          this.ticks = ++expiresAfter;
@@ -90,11 +87,22 @@
          } else {
            this.toExpand = true;
          }
+       },
+
+       toToggleUpdate () {
+         this.$emit('toToggleUpdate', true);
        }
      },
 
      created () {
        this.increment();
+       this.$on('toToggleUpdate', (toToggleUpdate) => {
+         this.updateNotification = toToggleUpdate;
+       });
+
+       eventBus.$on('cancelUpdate', (cancelUpdate) => {
+         this.updateNotification = cancelUpdate;
+       });
      }
   }
 </script>

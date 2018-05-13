@@ -3,36 +3,27 @@
 .change-notification {
   display: flex;
   flex-direction: column;
-  flex: 1;
   padding:10px;
   margin: 5px 0;
-  min-width: 350px;
+  width: 100%;
   border-radius: 10px;
   box-shadow: 2px rgba($color-black, 0.7);
   background-color: $color-silver;
 
+  &__action-area,
+  &__header-actions,
   &__info {
-    display: flex;
-    flex: 1;
-    flex-direction: row;
-    padding: 10px;
-    justify-content: flex-start;
-  }
-
-  &__input {
-    text-align: left;
-  }
-
-  &__label {
-    text-align: right;
-  }
-
-  &__action-area {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
     justify-content: flex-end;
     padding: 10px;
+    border: 2px groove green;
+  }
+
+  &__icon {
+    color: $color-bordo;
+    font-size: 18px;
   }
 
   &__button {

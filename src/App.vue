@@ -7,7 +7,7 @@
     <div v-if="error" class="error">
       {{ error }}
     </div>
-    <div v-bind:class="[showNotifications ? 'notifications-container__list--expanded' : 'notifications-container__list']">
+    <div v-bind:class="[showNotifications ? 'notifications-container notifications-container__list--expanded' : 'notifications-container notifications-container__list']">
       <notificationsTile
           v-bind:notifications="notifications"
           v-for="notification in notifications"
