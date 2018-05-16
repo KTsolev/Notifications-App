@@ -2,7 +2,7 @@
   <changeNotification v-if="updateNotification" v-bind:notification="notification" />
   <div v-else v-bind:class="[toExpand
   ? 'notification-tile notification-tile--expanded'
-    : 'notification-tile']" v-on:click="expand">
+    : itemDeleted ? 'notification-tile notification-tile--itemdeleted': 'notification-tile']" v-on:click="expand">
     <div v-if="notification.title" class="notification-tile__header-area">
       <h2 v-bind:class="[isBonus ? 'notification-tile__title notification-tile__title--bonus'
         : isPromotion ? 'notification-tile__title notification-tile__title--promotion' : 'notification-tile__title']">
@@ -25,7 +25,7 @@
       </div>
       <div class="notification-tile__action-area">
         <span class="notification-tile__button notification-tile__button--update" v-on:click="toToggleUpdate">Update</span>
-        <span class="notification-tile__button notification-tile__button--delete">Delete</span>
+        <span class="notification-tile__button notification-tile__button--delete" v-on:click="deleteItem">Delete</span>
       </div>
     </div>
   </div>
@@ -51,7 +51,8 @@
         return {
           ticks:0,
           toExpand: false,
-          updateNotification: false
+          updateNotification: false,
+          itemDeleted: false
         }
     },
 
@@ -69,16 +70,18 @@
        increment () {
          let expiresAfter = this.ticks;
 
-         if ( this.notification.expires === undefined) {
+         if ( this.notification.expires === undefined || this.notification.expires === null) {
            return;
          }
 
          if ( expiresAfter === this.notification.expires ) {
+           this.toDelete = true;
+           this.itemDeleted = true;
            return eventBus.$emit('itemExpired', this.notification);
          }
          this.ticks = ++expiresAfter;
 
-         setTimeout(() => this.increment(), 3000);
+         setTimeout(() => this.increment(), 1);
        },
 
        expand () {
@@ -90,7 +93,15 @@
        },
 
        toToggleUpdate () {
-         this.$emit('toToggleUpdate', true);
+         if (this.updateNotification) {
+           this.$emit('toToggleUpdate', false);
+         } else {
+           this.$emit('toToggleUpdate', true);
+         }
+       },
+
+       deleteItem() {
+         eventBus.$emit('notificationDeleted', this.notification._id);
        }
      },
 

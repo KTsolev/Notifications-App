@@ -1,34 +1,74 @@
 <template>
-  <div class="change-notification">
-    <div class="change-motification__header-actions">
-      <i class="fas fa-times change-motification__icon" v-on:click="cancel"></i>
+  <div class="change-notification" v-if="notification">
+    <div class="change-notification__header-actions">
+      <i class="fas fa-times change-notification__icon" v-on:click="cancel"></i>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="type">infor for type</label>
-      <input class="change-notification__imput" v-model:value="notification.type" placeholder="infor for type"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="type">type</label>
+      <input class="change-notification__imput"  v-model:value="notification.type" placeholder="type"/>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="title">infor for title</label>
-      <input class="change-notification__imput" v-model:value="notification.title" placeholder="infor for title"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="title">title</label>
+      <input class="change-notification__imput"  v-model:value="notification.title" placeholder="title"/>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="text">infor for text</label>
-      <input class="change-notification__imput" v-model:value="notification.text" placeholder="infor for text"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="text">text</label>
+      <input class="change-notification__imput"  v-model:value="notification.text" placeholder="text"/>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="image">infor for image</label>
-      <input class="change-notification__imput" v-model:value="notification.image" placeholder="infor for image"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="image">image</label>
+      <input class="change-notification__imput"  v-model:value="notification.image" placeholder="image"/>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="requirement">infor for requirement</label>
-      <input class="change-notification__imput" v-model:value="notification.reqirement" placeholder="infor for requirement"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="requirement">requirement</label>
+      <input class="change-notification__imput"  v-model:value="notification.reqirement" placeholder="requirement"/>
     </div>
-    <div class="change-motification__info">
-      <label class="change-notification__label" for="expires">infor for expires</label>
-      <input class="change-notification__imput" v-model:value="notification.expires" placeholder="infor for expires"/>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="link">link</label>
+      <input class="change-notification__imput"  v-model:value="notification.link" placeholder="link"/>
     </div>
-    <div class="change-motification__action-area">
-      <span class="change-notification__button">Update</span>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="expires">expires</label>
+      <input class="change-notification__imput"  v-model:value="notification.expires" placeholder="expires"/>
+    </div>
+    <div class="change-notification__action-area">
+      <span class="change-notification__button change-notification__button--update" v-on:click="itemUpdated">Update</span>
+    </div>
+  </div>
+  <div class="change-notification" v-else>
+    <div class="change-notification__header-actions">
+      <i class="fas fa-times change-notification__icon" v-on:click="hideModal"></i>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="type">type</label>
+      <input class="change-notification__imput" v-model="inputValues.type" placeholder="type"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="title">title</label>
+      <input class="change-notification__imput" v-model="inputValues.title" placeholder="title"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="text">text</label>
+      <input class="change-notification__imput" v-model="inputValues.text" placeholder="text"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="image">image</label>
+      <input class="change-notification__imput" v-model="inputValues.image" placeholder="image"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="requirement">requirement</label>
+      <input class="change-notification__imput" v-model="inputValues.requirement" placeholder="requirement"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="link">link</label>
+      <input class="change-notification__imput" v-model="inputValues.link" placeholder="link"/>
+    </div>
+    <div class="change-notification__info">
+      <label class="change-notification__label" for="expires">expires</label>
+      <input class="change-notification__imput" v-model="inputValues.expires" placeholder="expires"/>
+    </div>
+    <div class="change-notification__action-area">
+      <span class="change-notification__button change-notification__button--create" v-on:click="itemCreated">Create</span>
     </div>
   </div>
 </template>
@@ -40,20 +80,38 @@
     name: 'ChangeNotification',
 
     props: {
-      notification: Object
+      notification: Object,
+    },
+
+    data() {
+      return {
+        inputValues: {
+          type: null,
+          title: null,
+          text: null,
+          image: null,
+          link: null,
+          requirement: null,
+          expires: null
+        }
+      }
     },
 
     methods: {
       itemUpdated() {
-        eventBus.$emit('notificationChanged', true);
-      },
-
-      createNewItem() {
-        eventBus.$emit('newNotification', true);
+        eventBus.$emit('notificationChanged', this.notification);
       },
 
       cancel () {
         eventBus.$emit('cancelUpdate', false);
+      },
+
+      hideModal () {
+        eventBus.$emit('hideModal', true);
+      },
+
+      itemCreated() {
+        eventBus.$emit('itemCreated', this.inputValues);
       }
     }
   }

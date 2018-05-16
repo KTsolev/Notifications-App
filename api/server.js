@@ -27,11 +27,11 @@ router.get('/', function (req, res) {
 
 router.get('/notifications', Controller.findAll);
 
-router.post('/notifications/add-new', Controller.save);
+router.post('/notifications', Controller.save);
 
-router.put('/notifications/update', Controller.update);
+app.put('/notifications/:notificationId', Controller.update);
 
-router.delete('/notifications/delete:id', Controller.delete);
+app.delete('/notifications/:notificationId', Controller.delete);
 
 app.on('error', function (err) {
   console.error(err);
@@ -48,5 +48,5 @@ app.use(function (req, res, next) {
 app.use('/api', router);
 app.listen(port);
 console.log('==========================================================');
-console.log(`||Beers are served at: http://localhost: ${port || app.settings.env}||`);
+console.log(`||Candies are served at: http://localhost: ${port || app.settings.env}||`);
 console.log('==========================================================');

@@ -1,16 +1,13 @@
 <template>
-  <div class="notifications-container">
+  <modalWindow v-if="showModal" v-bind:toToggleModalWindow="showModal"/>
+  <div v-else class="notifications-container">
+    <notificationsCounter title="CLick for new notifications" />
     <notificationsCounter v-bind:notifications="newNotifications" title="CLick to view the notifications" />
-    <div class="loading" v-if="loading">
-      Loading...
-    </div>
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
-    <div v-bind:class="[showNotifications ? 'notifications-container notifications-container__list--expanded' : 'notifications-container notifications-container__list']">
+    <div v-bind:class="[showNotifications ? 'notifications-container notifications-container__list--visible' : 'notifications-container notifications-container__list']">
       <notificationsTile
           v-bind:notifications="notifications"
           v-for="notification in notifications"
+          v-bind:key="notification.id"
           v-bind:notification="notification" />
     </div>
   </div>
@@ -19,20 +16,21 @@
 <script>
   import notificationsTile from './components/NotificationsTile.vue';
   import notificationsCounter from './components/NotificationsCounter.vue';
+  import modalWindow from './components/ModalWindow.vue';
   import { eventBus } from './main.js';
 
   export default {
     components: {
       notificationsTile,
-      notificationsCounter
+      notificationsCounter,
+      modalWindow
     },
 
     data() {
         return {
             notifications: null,
-            loading: false,
-            error: null,
-            showNotifications: false
+            showNotifications: false,
+            showModal: false
         }
     },
 
@@ -46,24 +44,64 @@
 
     beforeRouteUpdate () {
       this.notifications = null;
-      this.loading = true;
-      this.error = null;
+      this.showModal = false;
     },
 
     created() {
       this.loadData();
       eventBus.$on('displayNotifications', (toToggle) => {
-        if( !toToggle ) {
-          this.showNotifications = false;
-        }
-
-        this.showNotifications = true;
+          this.showNotifications = toToggle;
       });
 
       eventBus.$on('itemExpired', (item) => {
         const index = this.notifications.indexOf(item);
         this.notifications.splice(index, 1);
+      });
 
+      eventBus.$on('createNew', (toToggle) => {
+        this.showModal = toToggle;
+      });
+
+      eventBus.$on('hideModal', (toToggle) => {
+        this.showModal = !toToggle;
+      });
+
+      eventBus.$on('itemCreated', (item) => {
+         fetch(`http://localhost:8060/api/notifications/`,
+         {
+            method: 'POST',
+            headers: {
+             'content-type': 'application/json'
+            },
+            body: JSON.stringify(item)
+         })
+          .then((data) => {
+            this.notifications.push(data);
+          });
+      });
+
+      eventBus.$on('notificationChanged', (item) => {
+         fetch(`http://localhost:8060/api/notifications/${item._id}`,
+         {
+            method: 'PUT',
+            headers: {
+             'content-type': 'application/json'
+            },
+            params: { notificationId: item._id },
+            body: JSON.stringify(item)
+         });
+      });
+
+      eventBus.$on('notificationDeleted', (item) => {
+
+         fetch(`http://localhost:8060/api/notifications/${item._id}`,
+         {
+            method: 'DELETE',
+            headers: {
+             'content-type': 'application/json'
+            },
+            params: { notificationId: item._id },
+         });
       });
     },
 
@@ -73,7 +111,7 @@
           .then(response => response.json())
           .then(jsonResponce => {
             this.notifications = jsonResponce;
-            this.loading = false;
+            console.log(this.notifications)
         });
       }
     }

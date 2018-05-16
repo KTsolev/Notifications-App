@@ -12,7 +12,7 @@
   box-shadow: 2px rgba($color-black, 0.7);
   transition: height 2s;
   transition-timing-function: linear;
-  background-color: $color-silver;
+  background-color: $color-white;
   cursor: pointer;
 
   &__info-area {
@@ -34,6 +34,19 @@
   &--expanded {
       height: 230px;
   }
+
+&--itemdeleted {
+  animation: itemdeleted 2s;
+}
+
+@keyframes itemdeleted {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+      transform: translateX(-10000);
+    }
+}
 
   &__header-area {
     display: flex;
